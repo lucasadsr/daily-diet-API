@@ -94,7 +94,7 @@ export async function mealsRoutes(app: FastifyInstance) {
     }
   })
 
-  // Get a especifc meal
+  // Get a specific meal
   app.get('/:id', async (request, reply) => {
     const getMealParamsSchema = z.object({
       id: z.string().uuid(),
@@ -104,7 +104,9 @@ export async function mealsRoutes(app: FastifyInstance) {
 
     const meal = await knex('meals').where('id', id)
 
-    if (meal) {
+    console.log(meal)
+
+    if (meal.length > 0) {
       return reply.status(200).send({ meal })
     } else {
       return reply.status(404).send({ message: 'Record not found' })
