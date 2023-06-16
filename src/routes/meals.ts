@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { knex } from '../database'
 
 export async function mealsRoutes(app: FastifyInstance) {
+  // Create new meal
   app.post('/', async (request, reply) => {
     const createMealBodySchema = z.object({
       name: z.string(),
@@ -36,5 +37,30 @@ export async function mealsRoutes(app: FastifyInstance) {
     })
 
     return reply.status(201).send()
+  })
+
+  // Edit an existign meal
+  app.put('/:id', async (request, reply) => {
+    const getMealParamsSchema = z.object({
+      id: z.string().uuid(),
+    })
+
+    const getMealSchema = z.object({
+      name: z.string(),
+      description: z.string(),
+      is_on_diet: z.enum(['yes', 'no']),
+    })
+
+    const { id } = getMealParamsSchema.parse(request.params)
+
+    const changes = getMealSchema.parse(request.body)
+
+    const update = await knex('meals').where('id', id).update(changes)
+
+    if (update) {
+      return reply.status(202).send({ message: 'Record successfully edited' })
+    } else {
+      return reply.status(404).send({ message: 'Record not found' })
+    }
   })
 }
