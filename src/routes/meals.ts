@@ -66,7 +66,6 @@ export async function mealsRoutes(app: FastifyInstance) {
 
   // Delete a meal
   app.delete('/:id', async (request, reply) => {
-    // Code
     const getMealParamsSchema = z.object({
       id: z.string().uuid(),
     })
@@ -83,13 +82,30 @@ export async function mealsRoutes(app: FastifyInstance) {
   })
 
   // Meals from a given user
-  app.get('/user/', async (request, reply) => {
+  app.get('/user', async (request, reply) => {
     const sessionId = request.cookies.sessionId
 
     const meals = await knex('meals').where('user_id', sessionId)
 
     if (meals) {
       return reply.status(200).send({ meals })
+    } else {
+      return reply.status(404).send({ message: 'Record not found' })
+    }
+  })
+
+  // Get a especifc meal
+  app.get('/:id', async (request, reply) => {
+    const getMealParamsSchema = z.object({
+      id: z.string().uuid(),
+    })
+
+    const { id } = getMealParamsSchema.parse(request.params)
+
+    const meal = await knex('meals').where('id', id)
+
+    if (meal) {
+      return reply.status(200).send({ meal })
     } else {
       return reply.status(404).send({ message: 'Record not found' })
     }
