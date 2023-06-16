@@ -63,4 +63,22 @@ export async function mealsRoutes(app: FastifyInstance) {
       return reply.status(404).send({ message: 'Record not found' })
     }
   })
+
+  // Delete a meal
+  app.delete('/:id', async (request, reply) => {
+    // Code
+    const getMealParamsSchema = z.object({
+      id: z.string().uuid(),
+    })
+
+    const { id } = getMealParamsSchema.parse(request.params)
+
+    const deleteMeal = await knex('meals').where('id', id).del()
+
+    if (deleteMeal) {
+      return reply.status(202).send({ message: 'Record successfully deleted' })
+    } else {
+      return reply.status(404).send({ message: 'Record not found' })
+    }
+  })
 }
