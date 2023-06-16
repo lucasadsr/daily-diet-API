@@ -81,4 +81,17 @@ export async function mealsRoutes(app: FastifyInstance) {
       return reply.status(404).send({ message: 'Record not found' })
     }
   })
+
+  // Meals from a given user
+  app.get('/user/', async (request, reply) => {
+    const sessionId = request.cookies.sessionId
+
+    const meals = await knex('meals').where('user_id', sessionId)
+
+    if (meals) {
+      return reply.status(200).send({ meals })
+    } else {
+      return reply.status(404).send({ message: 'Record not found' })
+    }
+  })
 }
