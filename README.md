@@ -59,17 +59,12 @@ npm install
 
 4. Configure as variáveis de ambiente necessárias, como a conexão com o banco de dados e a porta.
 
-5. Execute o comando para iniciar a API:
-```shell
+5. Rode as migrations do projeto para criar o banco de dados
+```bash
+npm run knex -- migrate:latest
+```
+
+6. Execute o comando para iniciar a API:
+```bash
 npm run dev
 ```
-npm start
-
-Copy code
-ou
-yarn start
-
-yaml
-Copy code
-
-6. A API estará disponível em `http://localhost:3000`.
