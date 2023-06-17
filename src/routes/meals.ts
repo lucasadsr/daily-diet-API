@@ -3,6 +3,7 @@ import { FastifyInstance } from 'fastify'
 import { randomUUID } from 'node:crypto'
 import { z } from 'zod'
 import { knex } from '../database'
+import { getBestSquenceOfMealsInDiet } from '../utils/get-best-sequence-of-meals-in-diet'
 
 export async function mealsRoutes(app: FastifyInstance) {
   // Create new meal
@@ -104,12 +105,24 @@ export async function mealsRoutes(app: FastifyInstance) {
 
     const meal = await knex('meals').where('id', id)
 
-    console.log(meal)
-
     if (meal.length > 0) {
       return reply.status(200).send({ meal })
     } else {
       return reply.status(404).send({ message: 'Record not found' })
     }
+  })
+
+  // User metrics
+  app.get('/metrics', async (request, reply) => {
+    const sessionId = request.cookies.sessionId
+
+    const meals = await knex('meals').where('user_id', sessionId)
+
+    const totalMeals = meals.length
+    const mealsInDiet = meals.filter((meal) => meal.is_on_diet === 'yes').length
+    const mealsOffDiet = meals.length - mealsInDiet
+    const bestSequence = getBestSquenceOfMealsInDiet(meals)
+
+    return { totalMeals, mealsInDiet, mealsOffDiet, bestSequence }
   })
 }
