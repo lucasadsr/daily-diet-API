@@ -1,6 +1,8 @@
 # Daily Diet API
 
-Esta é a API Daily Diet, um sistema de controle de dieta diária. 
+Esta é a API Daily Diet, um sistema de controle de dieta diária.
+
+<img src="./assets/print.png" />
 
 ## Regras da Aplicação
 
